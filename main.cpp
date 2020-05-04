@@ -1,6 +1,12 @@
 #include <iostream>
+#include <fstream>
+#include <string>
+#include "Problem.h"
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
+using namespace std;
+
+int main () {
+    Problem p("hm03r.fasta");
+
     return 0;
 }
