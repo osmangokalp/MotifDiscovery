@@ -15,8 +15,16 @@ public:
 
     const std::string &getFileName() const;
 
+    /**
+     *
+     * @return the number of sequences
+     */
     int getN() const;
 
+    /**
+     *
+     * @return the sequence length
+     */
     int getL() const;
 
     std::string *getSequences() const;

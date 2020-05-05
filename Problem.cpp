@@ -24,7 +24,7 @@ const std::string &Problem::getFileName() const {
 }
 
 Problem::~Problem() {
-    delete [] sequences;
+    delete[] sequences;
 }
 
 Problem::Problem(const std::string &fileName) : fileName(fileName) {
@@ -32,8 +32,34 @@ Problem::Problem(const std::string &fileName) : fileName(fileName) {
 
     std::string line;
 
-    while (getline (file, line)) {
-        // Output the text from the file
-        std::cout << line << "\n";
+    //find N
+    int counter = 0;
+    while (getline(file, line)) {
+        if (line[0] == '>') { // >seq_x line
+            counter++;
+        }
     }
+
+    this->N = counter;
+    this->sequences = new std::string[N];
+
+    file.clear();
+    file.seekg(0, std::ios::beg);
+
+    counter = 0;
+    while (getline(file, line)) {
+        if (line[0] == '>') { //sequence label line
+            getline(file, line); //read real sequence
+            sequences[counter++] = line;
+        }
+    }
+
+    file.close();
+
+    this->L = sequences[0].size();
+
+    for (int i = 0; i < N; i++) {
+        std::cout << sequences[i] + "\n";
+    }
+
 }

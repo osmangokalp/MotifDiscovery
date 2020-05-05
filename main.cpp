@@ -6,7 +6,9 @@
 using namespace std;
 
 int main () {
-    Problem p("hm03r.fasta");
+    Problem *p = new Problem("hm03r.fasta");
+
+    delete p;
 
     return 0;
 }
