@@ -32,7 +32,7 @@ Problem::Problem(const std::string &fileName) : fileName(fileName) {
 
     std::string line;
 
-    //find N
+    //find N, the number of sequences
     int counter = 0;
     while (getline(file, line)) {
         if (line[0] == '>') { // >seq_x line
@@ -56,10 +56,93 @@ Problem::Problem(const std::string &fileName) : fileName(fileName) {
 
     file.close();
 
+    //find L, the sequence length
     this->L = sequences[0].size();
+}
 
-    for (int i = 0; i < N; i++) {
-        std::cout << sequences[i] + "\n";
+double Problem::calculateSimilarity(int *positionVector, int motifLength) const {
+    double sim = -1;
+
+    try {
+        if (motifLength < 0) {
+            throw std::string("Motif length must be positive.");
+        }
+
+        double **profileMatrix = new double*[4]; //row order: A, T, G, C
+        for (int k = 0; k < 4; ++k) {
+            profileMatrix[k] = new double [motifLength];
+        }
+
+        for (int i = 0; i < motifLength; ++i) {
+            int countA = 0;
+            int countT = 0;
+            int countG = 0;
+            int countC = 0;
+
+            for (int j = 0; j < this->N; ++j) {
+                int startIndex = positionVector[j];
+
+                if (startIndex + motifLength > this->L) {
+                    throw std::string("Too long motif. Start index of the motif must be <= L - motifLength.");
+                }
+
+                if (startIndex < 0) {
+                    throw std::string("Start index can not be negative.");
+                }
+
+                char gene = sequences[j][startIndex + i];
+                switch (gene){
+                    case 'A':
+                        countA++;
+                        break;
+                    case 'T':
+                        countT++;
+                        break;
+                    case 'G':
+                        countG++;
+                        break;
+                    case 'C':
+                        countC++;
+                        break;
+                    default:
+                        throw std::string("Unexpected gene label: ") + gene + ". It should be A, C, G or T.";
+                }
+            }
+
+            profileMatrix[0][i] = (1.0 / this->N) * countA;
+            profileMatrix[1][i] = (1.0 / this->N) * countT;
+            profileMatrix[2][i] = (1.0 / this->N) * countG;
+            profileMatrix[3][i] = (1.0 / this->N) * countC;
+        }
+
+        //calculate similarity
+        double totalMax = 0.0;
+        for (int i = 0; i < motifLength; ++i) {
+            double max = profileMatrix[0][i];
+            if (profileMatrix[1][i] > max) {
+                max = profileMatrix[1][i];
+            }
+            if (profileMatrix[2][i] > max) {
+                max = profileMatrix[2][i];
+            }
+            if (profileMatrix[3][i] > max) {
+                max = profileMatrix[3][i];
+            }
+            totalMax += max;
+        }
+
+        sim = totalMax / motifLength;
+
+        //free profile matrix
+        for (int i = 0; i < 4; ++i) {
+            delete [] profileMatrix[i];
+        }
+        delete [] profileMatrix;
+
+        return sim;
     }
-
+    catch (std::string msg) {
+        std::cerr << msg << std::endl;
+        std::exit(1);
+    }
 }

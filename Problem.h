@@ -29,6 +29,8 @@ public:
 
     std::string *getSequences() const;
 
+    double calculateSimilarity(int *positionVector, int motifLength) const;
+
 private:
     std::string fileName;
     int N; //number of sequences
