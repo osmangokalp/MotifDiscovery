@@ -79,15 +79,17 @@ double Problem::calculateSimilarity(int *positionVector, int motifLength) const 
             int countG = 0;
             int countC = 0;
 
+            int numOfSkippedSequences = 0;
             for (int j = 0; j < this->N; ++j) {
                 int startIndex = positionVector[j];
 
-                if (startIndex + motifLength > this->L) {
-                    throw std::string("Too long motif. Start index of the motif must be <= L - motifLength.");
+                if (startIndex < 0) { //negative index means that the sequence will not be calculated
+                    numOfSkippedSequences++;
+                    continue;
                 }
 
-                if (startIndex < 0) {
-                    throw std::string("Start index can not be negative.");
+                if (startIndex + motifLength > this->L) {
+                    throw std::string("Too long motif. Start index of the motif must be <= L - motifLength.");
                 }
 
                 char gene = sequences[j][startIndex + i];
@@ -109,10 +111,11 @@ double Problem::calculateSimilarity(int *positionVector, int motifLength) const 
                 }
             }
 
-            profileMatrix[0][i] = (1.0 / this->N) * countA;
-            profileMatrix[1][i] = (1.0 / this->N) * countT;
-            profileMatrix[2][i] = (1.0 / this->N) * countG;
-            profileMatrix[3][i] = (1.0 / this->N) * countC;
+            int numOfEvaluatedSequences = this->N - numOfSkippedSequences;
+            profileMatrix[0][i] = (1.0 / numOfEvaluatedSequences) * countA;
+            profileMatrix[1][i] = (1.0 / numOfEvaluatedSequences) * countT;
+            profileMatrix[2][i] = (1.0 / numOfEvaluatedSequences) * countG;
+            profileMatrix[3][i] = (1.0 / numOfEvaluatedSequences) * countC;
         }
 
         //calculate similarity
