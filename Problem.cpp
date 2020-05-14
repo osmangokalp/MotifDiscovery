@@ -7,12 +7,12 @@
 #include <iostream>
 #include <fstream>
 
-int Problem::getN() const {
-    return N;
+int Problem::getT() const {
+    return t;
 }
 
-int Problem::getL() const {
-    return L;
+int Problem::getN() const {
+    return n;
 }
 
 std::string *Problem::getSequences() const {
@@ -32,7 +32,7 @@ Problem::Problem(const std::string &fileName) : fileName(fileName) {
 
     std::string line;
 
-    //find N, the number of sequences
+    //find t, the number of sequences
     int counter = 0;
     while (getline(file, line)) {
         if (line[0] == '>') { // >seq_x line
@@ -40,8 +40,8 @@ Problem::Problem(const std::string &fileName) : fileName(fileName) {
         }
     }
 
-    this->N = counter;
-    this->sequences = new std::string[N];
+    this->t = counter;
+    this->sequences = new std::string[t];
 
     file.clear();
     file.seekg(0, std::ios::beg);
@@ -56,31 +56,31 @@ Problem::Problem(const std::string &fileName) : fileName(fileName) {
 
     file.close();
 
-    //find L, the sequence length
-    this->L = sequences[0].size();
+    //find n, the sequence length
+    this->n = sequences[0].size();
 }
 
-double Problem::calculateSimilarity(int *positionVector, int motifLength) const {
+double Problem::calculateSimilarity(int *positionVector, int l) const {
     double sim = -1;
 
     try {
-        if (motifLength < 0) {
+        if (l < 0) {
             throw std::string("Motif length must be positive.");
         }
 
-        double **profileMatrix = new double*[4]; //row order: A, T, G, C
+        double **profileMatrix = new double *[4]; //row order: A, T, G, C
         for (int k = 0; k < 4; ++k) {
-            profileMatrix[k] = new double [motifLength];
+            profileMatrix[k] = new double[l];
         }
 
-        for (int i = 0; i < motifLength; ++i) {
+        for (int i = 0; i < l; ++i) {
             int countA = 0;
             int countT = 0;
             int countG = 0;
             int countC = 0;
 
             int numOfSkippedSequences = 0;
-            for (int j = 0; j < this->N; ++j) {
+            for (int j = 0; j < this->t; ++j) {
                 int startIndex = positionVector[j];
 
                 if (startIndex < 0) { //negative index means that the sequence will not be calculated
@@ -88,12 +88,12 @@ double Problem::calculateSimilarity(int *positionVector, int motifLength) const 
                     continue;
                 }
 
-                if (startIndex + motifLength > this->L) {
-                    throw std::string("Too long motif. Start index of the motif must be <= L - motifLength.");
+                if (startIndex + l > this->n) {
+                    throw std::string("Too long motif. Start index of the motif must be <= n - l.");
                 }
 
                 char gene = sequences[j][startIndex + i];
-                switch (gene){
+                switch (gene) {
                     case 'A':
                         countA++;
                         break;
@@ -111,7 +111,7 @@ double Problem::calculateSimilarity(int *positionVector, int motifLength) const 
                 }
             }
 
-            int numOfEvaluatedSequences = this->N - numOfSkippedSequences;
+            int numOfEvaluatedSequences = this->t - numOfSkippedSequences;
             profileMatrix[0][i] = (1.0 / numOfEvaluatedSequences) * countA;
             profileMatrix[1][i] = (1.0 / numOfEvaluatedSequences) * countT;
             profileMatrix[2][i] = (1.0 / numOfEvaluatedSequences) * countG;
@@ -120,7 +120,7 @@ double Problem::calculateSimilarity(int *positionVector, int motifLength) const 
 
         //calculate similarity
         double totalMax = 0.0;
-        for (int i = 0; i < motifLength; ++i) {
+        for (int i = 0; i < l; ++i) {
             double max = profileMatrix[0][i];
             if (profileMatrix[1][i] > max) {
                 max = profileMatrix[1][i];
@@ -134,13 +134,13 @@ double Problem::calculateSimilarity(int *positionVector, int motifLength) const 
             totalMax += max;
         }
 
-        sim = totalMax / motifLength;
+        sim = totalMax / l;
 
         //free profile matrix
         for (int i = 0; i < 4; ++i) {
-            delete [] profileMatrix[i];
+            delete[] profileMatrix[i];
         }
-        delete [] profileMatrix;
+        delete[] profileMatrix;
 
         return sim;
     }
@@ -148,4 +148,84 @@ double Problem::calculateSimilarity(int *positionVector, int motifLength) const 
         std::cerr << msg << std::endl;
         std::exit(1);
     }
+}
+
+char **Problem::constructAlignmentMatrix(int *positionVector, int numRow, int l) const {
+
+    try {
+        if (l <= 0) {
+            throw std::string("Motif length must be positive.");
+        }
+
+        char **alignmentMatrix = new char *[numRow];
+        for (int i = 0; i < numRow; ++i) {
+            alignmentMatrix[i] = new char[l];
+        }
+
+        for (int i = 0; i < l; ++i) {
+            int rowIndex = 0;
+            for (int j = 0; j < this->t; ++j) {
+                int startIndex = positionVector[j];
+
+                if (startIndex < 0) { //negative index means that the sequence will not be used
+                    continue;
+                }
+
+                if (startIndex + l > this->n) {
+                    throw std::string("Too long motif. Start index of the motif must be <= n - l.");
+                }
+
+                char gene = sequences[j][startIndex + i];
+                alignmentMatrix[rowIndex++][i] = gene;
+            }
+        }
+
+        return alignmentMatrix;
+    }
+    catch (std::string msg) {
+        std::cerr << msg << std::endl;
+        std::exit(1);
+    }
+}
+
+double **Problem::constructProfileMatrix(char **alignmentMatrix, int numRow, int l) {
+    double **profileMatrix = new double *[4]; //row order: A, T, G, C
+    for (int k = 0; k < 4; ++k) {
+        profileMatrix[k] = new double[l];
+    }
+
+    for (int i = 0; i < l; ++i) {
+        int countA = 0;
+        int countT = 0;
+        int countG = 0;
+        int countC = 0;
+
+        for (int j = 0; j < numRow; ++j) {
+
+            char gene = alignmentMatrix[j][i];
+            switch (gene) {
+                case 'A':
+                    countA++;
+                    break;
+                case 'T':
+                    countT++;
+                    break;
+                case 'G':
+                    countG++;
+                    break;
+                case 'C':
+                    countC++;
+                    break;
+                default:
+                    throw std::string("Unexpected gene label: ") + gene + ". It should be A, C, G or T.";
+            }
+        }
+
+        profileMatrix[0][i] = (1.0 / numRow) * countA;
+        profileMatrix[1][i] = (1.0 / numRow) * countT;
+        profileMatrix[2][i] = (1.0 / numRow) * countG;
+        profileMatrix[3][i] = (1.0 / numRow) * countC;
+    }
+
+    return profileMatrix;
 }

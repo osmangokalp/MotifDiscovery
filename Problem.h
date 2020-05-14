@@ -19,22 +19,26 @@ public:
      *
      * @return the number of sequences
      */
-    int getN() const;
+    int getT() const;
 
     /**
      *
      * @return the sequence length
      */
-    int getL() const;
+    int getN() const;
 
     std::string *getSequences() const;
 
-    double calculateSimilarity(int *positionVector, int motifLength) const;
+    double calculateSimilarity(int *positionVector, int l) const;
+
+    char **constructAlignmentMatrix(int *positionVector, int numRow, int l) const;
+
+    double **constructProfileMatrix(char **alignmentMatrix, int numRow, int l);
 
 private:
     std::string fileName;
-    int N; //number of sequences
-    int L; //sequence length
+    int t; //number of sequences
+    int n; //sequence length
     std::string *sequences;
 };
 

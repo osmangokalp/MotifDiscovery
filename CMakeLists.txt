@@ -3,4 +3,4 @@ project(MotifDiscovery)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(MotifDiscovery main.cpp Problem.cpp Problem.h)
+add_executable(MotifDiscovery main.cpp Problem.cpp Problem.h Greedy.cpp Greedy.h)
