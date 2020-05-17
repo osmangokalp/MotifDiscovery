@@ -60,94 +60,25 @@ Problem::Problem(const std::string &fileName) : fileName(fileName) {
     this->n = sequences[0].size();
 }
 
-double Problem::calculateSimilarity(int *positionVector, int l) const {
+ConsensusString Problem::calculateConsensusString(int *positionVector, int numRow, int l) const {
     double sim = -1;
 
-    try {
-        if (l < 0) {
-            throw std::string("Motif length must be positive.");
-        }
+    char** alignmentMatrix = this->constructAlignmentMatrix(positionVector, numRow, l);
+    double **profileMatrix = this->constructProfileMatrix(alignmentMatrix, numRow, l);
+    ConsensusString consensusString = this->constructConsensusString(profileMatrix, l);
 
-        double **profileMatrix = new double *[4]; //row order: A, T, G, C
-        for (int k = 0; k < 4; ++k) {
-            profileMatrix[k] = new double[l];
-        }
-
-        for (int i = 0; i < l; ++i) {
-            int countA = 0;
-            int countT = 0;
-            int countG = 0;
-            int countC = 0;
-
-            int numOfSkippedSequences = 0;
-            for (int j = 0; j < this->t; ++j) {
-                int startIndex = positionVector[j];
-
-                if (startIndex < 0) { //negative index means that the sequence will not be calculated
-                    numOfSkippedSequences++;
-                    continue;
-                }
-
-                if (startIndex + l > this->n) {
-                    throw std::string("Too long motif. Start index of the motif must be <= n - l.");
-                }
-
-                char gene = sequences[j][startIndex + i];
-                switch (gene) {
-                    case 'A':
-                        countA++;
-                        break;
-                    case 'T':
-                        countT++;
-                        break;
-                    case 'G':
-                        countG++;
-                        break;
-                    case 'C':
-                        countC++;
-                        break;
-                    default:
-                        throw std::string("Unexpected gene label: ") + gene + ". It should be A, C, G or T.";
-                }
-            }
-
-            int numOfEvaluatedSequences = this->t - numOfSkippedSequences;
-            profileMatrix[0][i] = (1.0 / numOfEvaluatedSequences) * countA;
-            profileMatrix[1][i] = (1.0 / numOfEvaluatedSequences) * countT;
-            profileMatrix[2][i] = (1.0 / numOfEvaluatedSequences) * countG;
-            profileMatrix[3][i] = (1.0 / numOfEvaluatedSequences) * countC;
-        }
-
-        //calculate similarity
-        double totalMax = 0.0;
-        for (int i = 0; i < l; ++i) {
-            double max = profileMatrix[0][i];
-            if (profileMatrix[1][i] > max) {
-                max = profileMatrix[1][i];
-            }
-            if (profileMatrix[2][i] > max) {
-                max = profileMatrix[2][i];
-            }
-            if (profileMatrix[3][i] > max) {
-                max = profileMatrix[3][i];
-            }
-            totalMax += max;
-        }
-
-        sim = totalMax / l;
-
-        //free profile matrix
-        for (int i = 0; i < 4; ++i) {
-            delete[] profileMatrix[i];
-        }
-        delete[] profileMatrix;
-
-        return sim;
+    //free memory
+    for (int i = 0; i < numRow; ++i) {
+        delete[] alignmentMatrix[i];
     }
-    catch (std::string msg) {
-        std::cerr << msg << std::endl;
-        std::exit(1);
+    delete[] alignmentMatrix;
+
+    for (int i = 0; i < 4; ++i) {
+        delete[] profileMatrix[i];
     }
+    delete[] profileMatrix;
+
+    return consensusString;
 }
 
 char **Problem::constructAlignmentMatrix(int *positionVector, int numRow, int l) const {

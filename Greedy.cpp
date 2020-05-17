@@ -12,7 +12,7 @@
  * @param l the motif length (searching for l-mer)
  */
 void Greedy::GreedyMotifSearch(Problem *problem, int *bestMotifIndexArray, int l) const {
-    int n = problem ->getN();
+    int n = problem->getN();
     int t = problem->getT();
 
     //init best motif index array
@@ -25,7 +25,7 @@ void Greedy::GreedyMotifSearch(Problem *problem, int *bestMotifIndexArray, int l
 
     }
 
-    double scoreBestMotif = problem->calculateSimilarity(bestMotifIndexArray, l);
+    double scoreBestMotif = problem->calculateConsensusString(bestMotifIndexArray, 2, l).getSimilarity();
 
     //create and init temp motif array
     int *s = new int[t];
@@ -37,7 +37,7 @@ void Greedy::GreedyMotifSearch(Problem *problem, int *bestMotifIndexArray, int l
         for (int s1 = 0; s1 < n - l + 1; ++s1) {
             s[0] = s0;
             s[1] = s1;
-            double scoreS = problem->calculateSimilarity(s, l);
+            double scoreS = problem->calculateConsensusString(s, 2, l).getSimilarity();
             if (scoreS > scoreBestMotif) {
                 bestMotifIndexArray[0] = s0;
                 bestMotifIndexArray[1] = s1;
@@ -45,16 +45,16 @@ void Greedy::GreedyMotifSearch(Problem *problem, int *bestMotifIndexArray, int l
             }
         }
     }
-    
+
     s[0] = bestMotifIndexArray[0];
     s[1] = bestMotifIndexArray[1];
 
     for (int i = 2; i < t; ++i) {
         bestMotifIndexArray[i] = 0; //include index i into calculation (change default value -1 that means sequence i will not be used)
-        scoreBestMotif = problem->calculateSimilarity(bestMotifIndexArray, l);
+        scoreBestMotif = problem->calculateConsensusString(bestMotifIndexArray, i + 1, l).getSimilarity();
         for (int si = 0; si < n - l + 1; ++si) {
             s[i] = si;
-            double scoreS = problem->calculateSimilarity(s, l);
+            double scoreS = problem->calculateConsensusString(s, i + 1, l).getSimilarity();
             if (scoreS > scoreBestMotif) {
                 bestMotifIndexArray[i] = si;
                 scoreBestMotif = scoreS;

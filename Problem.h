@@ -30,7 +30,7 @@ public:
 
     std::string *getSequences() const;
 
-    double calculateSimilarity(int *positionVector, int l) const;
+    ConsensusString calculateConsensusString(int *positionVector, int numRow, int l) const;
 
     char **constructAlignmentMatrix(int *positionVector, int numRow, int l) const;
 
