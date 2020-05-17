@@ -188,7 +188,45 @@ char **Problem::constructAlignmentMatrix(int *positionVector, int numRow, int l)
     }
 }
 
-double **Problem::constructProfileMatrix(char **alignmentMatrix, int numRow, int l) {
+ConsensusString Problem::constructConsensusString(double **profileMatrix, int l) const {
+    std::string conSeq (l, '-');
+
+    double maxTotal = 0;
+    for (int i = 0; i < l; ++i) {
+        int maxIndex = 0;
+        double maxVal = profileMatrix[0][i];
+
+        for (int j = 1; j < 4; ++j) {
+            if (profileMatrix[j][i] > maxVal) {
+                maxVal = profileMatrix[j][i];
+                maxIndex = j;
+            }
+        }
+
+        switch (maxIndex) {
+            case 0:
+                conSeq[i] = 'A';
+                break;
+            case 1:
+                conSeq[i] = 'T';
+                break;
+            case 2:
+                conSeq[i] = 'G';
+                break;
+            case 3:
+                conSeq[i] = 'C';
+                break;
+        }
+
+        maxTotal += maxVal;
+    }
+
+    double sim = maxTotal / l;
+
+    return ConsensusString(conSeq, sim);
+}
+
+double **Problem::constructProfileMatrix(char **alignmentMatrix, int numRow, int l) const{
     double **profileMatrix = new double *[4]; //row order: A, T, G, C
     for (int k = 0; k < 4; ++k) {
         profileMatrix[k] = new double[l];

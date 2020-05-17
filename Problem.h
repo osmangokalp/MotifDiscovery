@@ -6,6 +6,7 @@
 #define MOTIFDISCOVERY_PROBLEM_H
 
 #include <string>
+#include "ConsensusString.h"
 
 class Problem {
 public:
@@ -33,7 +34,9 @@ public:
 
     char **constructAlignmentMatrix(int *positionVector, int numRow, int l) const;
 
-    double **constructProfileMatrix(char **alignmentMatrix, int numRow, int l);
+    double **constructProfileMatrix(char **alignmentMatrix, int numRow, int l) const;
+
+    ConsensusString constructConsensusString(double **profileMatrix, int l) const;
 
 private:
     std::string fileName;

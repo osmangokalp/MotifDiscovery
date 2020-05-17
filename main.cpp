@@ -56,6 +56,10 @@ int main () {
         std::cout << std::endl;
     }
 
+    ConsensusString cs = p->constructConsensusString(pm, l);
+    std::cout << "Consensus string: " << cs.getSequence() << std::endl;
+    std::cout << "Consensus similarity: " << cs.getSimilarity() << std::endl;
+
     //free
     for (int i = 0; i < numRow; ++i) {
         delete[] am[i];
