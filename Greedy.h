@@ -10,7 +10,7 @@
 
 class Greedy {
 public:
-    void GreedyMotifSearch(Problem *problem, int *bestMotifIndexArray, int l) const;
+    int *GreedyMotifSearch(Problem *problem, int l) const;
 };
 
 

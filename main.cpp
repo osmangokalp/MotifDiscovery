@@ -9,8 +9,8 @@ int main () {
 
     Greedy greedy;
     int l = 10;
-    int *bestMotifIndexArray = new int[p->getT()];
-    greedy.GreedyMotifSearch(p, bestMotifIndexArray, l);
+
+    int *bestMotifIndexArray = greedy.GreedyMotifSearch(p, l);
 
     int numRow = 10;
 

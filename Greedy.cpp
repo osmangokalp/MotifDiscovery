@@ -8,12 +8,13 @@
  * Implementation of the GreedyMotifSearch algorithm in book
  * "An introduction to bioinformatics algorithms", Jones N.C., Pevzner P.A., 2004, MIT Press.
  * @param problem
- * @param bestMotifIndexArray to be found
  * @param l the motif length (searching for l-mer)
+ * @return bestMotifIndexArray found
  */
-void Greedy::GreedyMotifSearch(Problem *problem, int *bestMotifIndexArray, int l) const {
+int *Greedy::GreedyMotifSearch(Problem *problem, int l) const {
     int n = problem->getN();
     int t = problem->getT();
+    int *bestMotifIndexArray = new int[t];
 
     //init best motif index array
     for (int i = 0; i < t; ++i) {
@@ -64,4 +65,6 @@ void Greedy::GreedyMotifSearch(Problem *problem, int *bestMotifIndexArray, int l
     }
 
     delete[] s;
+
+    return bestMotifIndexArray;
 }
