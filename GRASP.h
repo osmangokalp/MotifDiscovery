@@ -6,8 +6,11 @@
 #define MOTIFDISCOVERY_GRASP_H
 
 
-class GRASP {
+#include "Problem.h"
 
+class GRASP {
+public:
+    int *GRASPMotifSearch(Problem *problem, int l, double alpha, double cadidateRatio, int SEED, int MAX_EVAL) const;
 };
 
 

@@ -5,7 +5,7 @@
 #include "Greedy.h"
 
 /**
- * Implementation of the GreedyMotifSearch algorithm in book
+ * Implementation of the GRASPMotifSearch algorithm in book
  * "An introduction to bioinformatics algorithms", Jones N.C., Pevzner P.A., 2004, MIT Press.
  * @param problem
  * @param l the motif length (searching for l-mer)

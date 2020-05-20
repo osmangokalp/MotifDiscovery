@@ -1,16 +1,23 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 #include "Problem.h"
 #include "Greedy.h"
+#include "GRASP.h"
 
 int main () {
     Problem *p = new Problem("hm03r.fasta");
-
-    Greedy greedy;
     int l = 10;
+    double alpha = 1.0;
+    double candiateRatio = 0.7;
+    int SEED = 101;
+    int MAX_EVAL = 300000;
+    int *bestMotifIndexArray;
 
-    int *bestMotifIndexArray = greedy.GreedyMotifSearch(p, l);
+    GRASP grasp;
+    bestMotifIndexArray = grasp.GRASPMotifSearch(p, l, alpha, candiateRatio, SEED, MAX_EVAL);
+
+    /*Greedy greedy;
+    bestMotifIndexArray = greedy.GreedyMotifSearch(p, l);*/
 
     int numRow = 10;
 
@@ -19,19 +26,8 @@ int main () {
         std::cout << bestMotifIndexArray[i] << ", ";
     }
 
-    std::cout << std::endl << "Alignment matrix:" << std::endl;
-    for (int i = 0; i < p->getT(); ++i) {
-        if (bestMotifIndexArray[i] == -1) {
-            continue;
-        }
-        for (int j = bestMotifIndexArray[i]; j < bestMotifIndexArray[i] + l; ++j) {
-            std::cout << p->getSequences()[i][j];
-        }
-        std::cout << std::endl;
-    }
-
     char** am = p->constructAlignmentMatrix(bestMotifIndexArray, numRow, l);
-    std::cout << std::endl << "Alignment matrix by method:" << std::endl;
+    std::cout << std::endl << "Alignment matrix:" << std::endl;
     for (int i = 0; i < numRow; ++i) {
         for (int j = 0; j < l; ++j) {
             std::cout << am[i][j];
