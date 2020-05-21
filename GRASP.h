@@ -10,7 +10,7 @@
 
 class GRASP {
 public:
-    int *GRASPMotifSearch(Problem *problem, int l, double alpha, double cadidateRatio, int SEED, int MAX_EVAL) const;
+    int *GRASPMotifSearch(Problem &problem, int l, double alpha, double cadidateRatio, int SEED, int MAX_EVAL) const;
 };
 
 

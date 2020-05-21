@@ -11,9 +11,9 @@
  * @param l the motif length (searching for l-mer)
  * @return bestMotifIndexArray found
  */
-int *Greedy::GreedyMotifSearch(Problem *problem, int l) const {
-    int n = problem->getN();
-    int t = problem->getT();
+int *Greedy::GreedyMotifSearch(Problem &problem, int l) const {
+    int n = problem.getN();
+    int t = problem.getT();
     int *bestMotifIndexArray = new int[t];
 
     //init best motif index array
@@ -26,7 +26,7 @@ int *Greedy::GreedyMotifSearch(Problem *problem, int l) const {
 
     }
 
-    double scoreBestMotif = problem->calculateConsensusString(bestMotifIndexArray, 2, l).getSimilarity();
+    double scoreBestMotif = problem.calculateConsensusString(bestMotifIndexArray, 2, l).getSimilarity();
 
     //create and init temp motif array
     int *s = new int[t];
@@ -38,7 +38,7 @@ int *Greedy::GreedyMotifSearch(Problem *problem, int l) const {
         for (int s1 = 0; s1 < n - l + 1; ++s1) {
             s[0] = s0;
             s[1] = s1;
-            double scoreS = problem->calculateConsensusString(s, 2, l).getSimilarity();
+            double scoreS = problem.calculateConsensusString(s, 2, l).getSimilarity();
             if (scoreS > scoreBestMotif) {
                 bestMotifIndexArray[0] = s0;
                 bestMotifIndexArray[1] = s1;
@@ -52,10 +52,10 @@ int *Greedy::GreedyMotifSearch(Problem *problem, int l) const {
 
     for (int i = 2; i < t; ++i) {
         bestMotifIndexArray[i] = 0; //include index i into calculation (change default value -1 that means sequence i will not be used)
-        scoreBestMotif = problem->calculateConsensusString(bestMotifIndexArray, i + 1, l).getSimilarity();
+        scoreBestMotif = problem.calculateConsensusString(bestMotifIndexArray, i + 1, l).getSimilarity();
         for (int si = 0; si < n - l + 1; ++si) {
             s[i] = si;
-            double scoreS = problem->calculateConsensusString(s, i + 1, l).getSimilarity();
+            double scoreS = problem.calculateConsensusString(s, i + 1, l).getSimilarity();
             if (scoreS > scoreBestMotif) {
                 bestMotifIndexArray[i] = si;
                 scoreBestMotif = scoreS;

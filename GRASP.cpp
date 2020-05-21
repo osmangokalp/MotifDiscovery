@@ -8,9 +8,9 @@
 #include <vector>
 
 int *
-GRASP::GRASPMotifSearch(Problem *problem, int l, double alpha, double cadidateRatio, int SEED, int MAX_EVAL) const {
-    int n = problem->getN();
-    int t = problem->getT();
+GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double cadidateRatio, int SEED, int MAX_EVAL) const {
+    int n = problem.getN();
+    int t = problem.getT();
     int *bestMotifIndexArray = new int[t];
     double bestScore = 0.0;
     int numEval = 0;
@@ -56,7 +56,7 @@ GRASP::GRASPMotifSearch(Problem *problem, int l, double alpha, double cadidateRa
             double min = 1.0;
             for (int j = 0; j < candidateCount; ++j) {
                 s[row] = CL[j];
-                double score = problem->calculateConsensusString(s, row + 1, l).getSimilarity();
+                double score = problem.calculateConsensusString(s, row + 1, l).getSimilarity();
 
                 numEval++;
 
@@ -85,7 +85,7 @@ GRASP::GRASPMotifSearch(Problem *problem, int l, double alpha, double cadidateRa
         }
 
         //calculate
-        double scoreS = problem->calculateConsensusString(s, t, l).getSimilarity();
+        double scoreS = problem.calculateConsensusString(s, t, l).getSimilarity();
 
         numEval++;
 
