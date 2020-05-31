@@ -5,12 +5,12 @@
 #include "GRASP.h"
 
 int main () {
-    Problem p("hm03r.fasta");
-    int l = 10;
+    Problem p("yst04r.fasta");
+    int l = 22;
     double alpha = 1.0;
-    double candiateRatio = 0.7;
+    double candiateRatio = 0.2;
     int SEED = 101;
-    int MAX_EVAL = 300000;
+    int MAX_EVAL = p.getN() * p.getT() * 10;
     int *bestMotifIndexArray;
 
     GRASP grasp;
@@ -19,7 +19,7 @@ int main () {
     /*Greedy greedy;
     bestMotifIndexArray = greedy.GreedyMotifSearch(p, l);*/
 
-    int numRow = 10;
+    int numRow = p.getT();
 
     std::cout << "Best motif index array:";
     for (int i = 0; i < p.getT(); ++i) {
