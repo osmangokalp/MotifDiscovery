@@ -6,8 +6,11 @@
 #define MOTIFDISCOVERY_LOCALSEARCH_H
 
 
-class LocalSearch {
+#include "Problem.h"
 
+class LocalSearch {
+public:
+    void oneExchange(Problem &problem, int l, bool impType, int *sol, int scoreSol, int &numEval);
 };
 
 
