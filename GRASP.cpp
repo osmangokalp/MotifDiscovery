@@ -3,6 +3,7 @@
 //
 
 #include "GRASP.h"
+#include "LocalSearch.h"
 #include <random>
 #include <iostream>
 #include <vector>
@@ -22,6 +23,9 @@ GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double cadidateRa
     int *RCL = new int[candidateCount]; //restricted candidate list (max size: candidate list)
     double *scores = new double[candidateCount];
     int *s = new int[t]; //temp motif index array
+
+    LocalSearch ls;
+    bool firstImp = true;
 
     int GRASPIter = 0;
     while (numEval < MAX_EVAL) {
@@ -86,12 +90,26 @@ GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double cadidateRa
 
         //calculate
         double scoreS = problem.calculateConsensusString(s, t, l).getSimilarity();
-
         numEval++;
+
+        std::cout << "Score: " << scoreS << std::endl;
+
+        bool imp;
+        do {
+            imp = false;
+            double before = scoreS;
+            ls.oneExchange(problem, l, firstImp, s, scoreS, numEval);
+            double after = scoreS;
+            if (after - before > 0) {
+                imp = true;
+            }
+        } while (imp);
+
+        std::cout << "Score after ls: " << scoreS << std::endl;
 
         if (scoreS > bestScore) {
             bestScore = scoreS;
-            std::cout << "New best: " << bestScore << std::endl;
+
             for (int i = 0; i < t; ++i) {
                 bestMotifIndexArray[i] = s[i];
             }

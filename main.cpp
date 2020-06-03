@@ -5,12 +5,12 @@
 #include "GRASP.h"
 
 int main () {
-    Problem p("yst04r.fasta");
-    int l = 22;
+    Problem p("yst08r.fasta");
+    int l = 10;
     double alpha = 1.0;
     double candiateRatio = 0.2;
     int SEED = 101;
-    int MAX_EVAL = p.getN() * p.getT() * 10;
+    int MAX_EVAL = p.getN() * p.getT() * 100;
     int *bestMotifIndexArray;
 
     GRASP grasp;

@@ -10,7 +10,7 @@
 
 class LocalSearch {
 public:
-    void oneExchange(Problem &problem, int l, bool impType, int *sol, int scoreSol, int &numEval);
+    void oneExchange(Problem &problem, int l, bool firstImp, int *sol, double &scoreSol, int &numEval) const;
 };
 
 
