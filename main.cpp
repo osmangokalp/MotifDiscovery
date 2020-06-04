@@ -3,21 +3,23 @@
 #include "Problem.h"
 #include "Greedy.h"
 #include "GRASP.h"
+#include "LocalSearch.h"
+#include "Perturbation.h"
 
 int main () {
-    Problem p("yst08r.fasta");
+    Problem p("hm03r.fasta");
     int l = 10;
     double alpha = 1.0;
     double candiateRatio = 0.2;
     int SEED = 101;
-    int MAX_EVAL = p.getN() * p.getT() * 100;
+    int MAX_EVAL = p.getN() * (p.getN() - 1)  * 0.5 + (p.getT() - 2) * p.getN();
     int *bestMotifIndexArray;
 
     GRASP grasp;
     bestMotifIndexArray = grasp.GRASPMotifSearch(p, l, alpha, candiateRatio, SEED, MAX_EVAL);
 
-    /*Greedy greedy;
-    bestMotifIndexArray = greedy.GreedyMotifSearch(p, l);*/
+    //Greedy greedy;
+    //bestMotifIndexArray = greedy.GreedyMotifSearch(p, l);
 
     int numRow = p.getT();
 
