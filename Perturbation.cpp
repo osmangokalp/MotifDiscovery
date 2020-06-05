@@ -6,12 +6,10 @@
 #include <random>
 #include "Perturbation.h"
 
-int *Perturbation::perturb(Problem &problem, int l, int *sol, int k, int SEED) const {
+int *Perturbation::perturb(Problem &problem, int l, int *sol, int k, std::default_random_engine generator) const {
     int t = problem.getT();
     int n = problem.getN();
     int *solPerturbed = new int[t];
-
-    std::default_random_engine generator(SEED);
 
     for (int i = 0; i < t; ++i) {
         solPerturbed[i] = sol[i];

@@ -10,7 +10,7 @@
 
 class Perturbation {
 public:
-    int *perturb(Problem &problem, int l, int *sol, int k, int SEED) const;
+    int *perturb(Problem &problem, int l, int *sol, int k, std::default_random_engine generator) const;
 };
 
 

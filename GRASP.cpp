@@ -4,21 +4,18 @@
 
 #include "GRASP.h"
 #include "LocalSearch.h"
-#include <random>
 #include <iostream>
 #include <vector>
 
 int *
-GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double cadidateRatio, int SEED, int MAX_EVAL) const {
+GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateRatio, std::default_random_engine generator, int MAX_EVAL) const {
     int n = problem.getN();
     int t = problem.getT();
     int *bestMotifIndexArray = new int[t];
     double bestScore = 0.0;
     int numEval = 0;
 
-    std::default_random_engine generator(SEED);
-
-    int candidateCount = (n - l + 1) * cadidateRatio;
+    int candidateCount = (n - l + 1) * candidateRatio;
     int *CL = new int[candidateCount]; //candidate list
     int *RCL = new int[candidateCount]; //restricted candidate list (max size: candidate list)
     double *scores = new double[candidateCount];
@@ -43,7 +40,7 @@ GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double cadidateRa
         }
 
         for (int row = 1; row < t; ++row) {
-            //construct candiate list CL
+            //construct candidate list CL
             std::vector<int> v(n - l + 1);
             for (int i = 0; i < v.size(); ++i) {
                 v[i] = i;

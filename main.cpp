@@ -10,13 +10,14 @@ int main () {
     Problem p("hm03r.fasta");
     int l = 10;
     double alpha = 1.0;
-    double candiateRatio = 0.2;
+    double candidateRatio = 0.2;
     int SEED = 101;
+    std::default_random_engine generator(SEED);
     int MAX_EVAL = p.getN() * (p.getN() - 1)  * 0.5 + (p.getT() - 2) * p.getN();
     int *bestMotifIndexArray;
 
     GRASP grasp;
-    bestMotifIndexArray = grasp.GRASPMotifSearch(p, l, alpha, candiateRatio, SEED, MAX_EVAL);
+    bestMotifIndexArray = grasp.GRASPMotifSearch(p, l, alpha, candidateRatio, generator, MAX_EVAL);
 
     //Greedy greedy;
     //bestMotifIndexArray = greedy.GreedyMotifSearch(p, l);
