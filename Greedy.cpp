@@ -11,60 +11,44 @@
  * @param l the motif length (searching for l-mer)
  * @return bestMotifIndexArray found
  */
-int *Greedy::GreedyMotifSearch(Problem &problem, int l) const {
+Solution Greedy::GreedyMotifSearch(Problem &problem, int l) const {
     int n = problem.getN();
     int t = problem.getT();
-    int *bestMotifIndexArray = new int[t];
 
-    //init best motif index array
-    for (int i = 0; i < t; ++i) {
-        if (i == 0 || i == 1) {
-            bestMotifIndexArray[i] = 0;
-        } else {
-            bestMotifIndexArray[i] = -1;
-        }
+    Solution bestSolution(t);
+    bestSolution.startIndices[0] = 0;
+    bestSolution.startIndices[1] = 0;
 
-    }
+    problem.evaluateSolution(bestSolution, 2, l);
 
-    double scoreBestMotif = problem.calculateConsensusString(bestMotifIndexArray, 2, l).getSimilarity();
-
-    //create and init temp motif array
-    int *s = new int[t];
-    for (int i = 0; i < t; ++i) {
-        s[i] = -1;
-    }
+    //create and init incumbent solution
+    Solution solution(t);
 
     for (int s0 = 0; s0 < n - l + 1; ++s0) {
         for (int s1 = 0; s1 < n - l + 1; ++s1) {
-            s[0] = s0;
-            s[1] = s1;
-            double scoreS = problem.calculateConsensusString(s, 2, l).getSimilarity();
-            if (scoreS > scoreBestMotif) {
-                bestMotifIndexArray[0] = s0;
-                bestMotifIndexArray[1] = s1;
-                scoreBestMotif = scoreS;
+            solution.startIndices[0] = s0;
+            solution.startIndices[1] = s1;
+            problem.evaluateSolution(solution, 2, l);
+            if (solution.similarityScore > bestSolution.similarityScore) {
+                bestSolution = solution; //deep copy
             }
         }
     }
 
-    s[0] = bestMotifIndexArray[0];
-    s[1] = bestMotifIndexArray[1];
+    solution = bestSolution; //continue with the deep copy of the best solution so far
 
     for (int i = 2; i < t; ++i) {
-        bestMotifIndexArray[i] = 0; //include index i into calculation (change default value -1 that means sequence i will not be used)
-        scoreBestMotif = problem.calculateConsensusString(bestMotifIndexArray, i + 1, l).getSimilarity();
+        bestSolution.startIndices[i] = 0; //include index i into calculation (change default value -1 that means sequence i will not be used)
+        problem.evaluateSolution(bestSolution, i + 1, l);
         for (int si = 0; si < n - l + 1; ++si) {
-            s[i] = si;
-            double scoreS = problem.calculateConsensusString(s, i + 1, l).getSimilarity();
-            if (scoreS > scoreBestMotif) {
-                bestMotifIndexArray[i] = si;
-                scoreBestMotif = scoreS;
+            solution.startIndices[i] = si;
+            problem.evaluateSolution(solution, i + 1, l);
+            if (solution.similarityScore > bestSolution.similarityScore) {
+                bestSolution = solution;
             }
         }
-        s[i] = bestMotifIndexArray[i];
+        solution = bestSolution;
     }
 
-    delete[] s;
-
-    return bestMotifIndexArray;
+    return bestSolution;
 }

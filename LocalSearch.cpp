@@ -4,40 +4,41 @@
 
 #include "LocalSearch.h"
 
-void LocalSearch::oneExchange(Problem &problem, int l, bool firstImp, int *sol, double &scoreSol, int &numEval) const {
+void LocalSearch::oneExchange(Problem &problem, int l, bool firstImp, Solution &sol, int &numEval) const {
     int n = problem.getN();
     int t = problem.getT();
 
     int bestRow = -1, bestStartIndex = -1;
-    double bestScore = scoreSol;
+    double startScore = sol.similarityScore;
+    double bestScore = startScore;
 
     for (int row = 0; row < t; ++row) {
-        int temp = sol[row];
+        int temp = sol.startIndices[row];
 
         for (int si = 0; si < n - l + 1; ++si) {
-            sol[row] = si;
-            ConsensusString cs = problem.calculateConsensusString(sol, t, l);
+            sol.startIndices[row] = si;
+            problem.evaluateSolution(sol, t, l);
             numEval++;
-            double score = cs.getSimilarity();
 
-            if (score > bestScore) {
-                bestScore = score;
-                bestRow = row;
-                bestStartIndex = si;
+            if (sol.similarityScore > bestScore) {
 
                 if (firstImp) { //first imp.
-                    scoreSol = bestScore;
                     return;
                 }
+
+                bestScore = sol.similarityScore;
+                bestRow = row;
+                bestStartIndex = si;
             }
         }
 
-        sol[row] = temp; //restore original value
+        sol.startIndices[row] = temp; //restore original value
     }
 
-    if (bestScore > scoreSol) { //there is an improvement
-        sol[bestRow] = bestStartIndex;
-        scoreSol = bestScore;
+    if (bestScore > startScore) { //there is an improvement
+        sol.startIndices[bestRow] = bestStartIndex;
+        problem.evaluateSolution(sol, t, l); //final evaluation
+        numEval++;
     }
 
 }

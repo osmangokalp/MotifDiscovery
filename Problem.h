@@ -7,6 +7,7 @@
 
 #include <string>
 #include "ConsensusString.h"
+#include "Solution.h"
 
 class Problem {
 public:
@@ -30,7 +31,7 @@ public:
 
     std::string *getSequences() const;
 
-    ConsensusString calculateConsensusString(int *positionVector, int numRow, int l) const;
+    void evaluateSolution(Solution &sol, int numRow, int l) const;
 
     char **constructAlignmentMatrix(int *positionVector, int numRow, int l) const;
 

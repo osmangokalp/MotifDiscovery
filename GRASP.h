@@ -8,10 +8,13 @@
 
 #include <random>
 #include "Problem.h"
+#include "Solution.h"
 
 class GRASP {
 public:
-    int *GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateRatio, std::default_random_engine generator, int MAX_EVAL) const;
+    Solution
+    GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateRatio, std::default_random_engine generator,
+                     int MAX_EVAL) const;
 };
 
 

@@ -60,12 +60,12 @@ Problem::Problem(const std::string &fileName) : fileName(fileName) {
     this->n = sequences[0].size();
 }
 
-ConsensusString Problem::calculateConsensusString(int *positionVector, int numRow, int l) const {
+void Problem::evaluateSolution(Solution &sol, int numRow, int l) const {
     double sim = -1;
 
-    char** alignmentMatrix = this->constructAlignmentMatrix(positionVector, numRow, l);
-    double **profileMatrix = this->constructProfileMatrix(alignmentMatrix, numRow, l);
-    ConsensusString consensusString = this->constructConsensusString(profileMatrix, l);
+    char **alignmentMatrix = constructAlignmentMatrix(sol.startIndices, numRow, l);
+    double **profileMatrix = constructProfileMatrix(alignmentMatrix, numRow, l);
+    ConsensusString consensusString = constructConsensusString(profileMatrix, l);
 
     //free memory
     for (int i = 0; i < numRow; ++i) {
@@ -78,7 +78,8 @@ ConsensusString Problem::calculateConsensusString(int *positionVector, int numRo
     }
     delete[] profileMatrix;
 
-    return consensusString;
+    sol.consensusString = consensusString.getSequence();
+    sol.similarityScore = consensusString.getSimilarity();
 }
 
 char **Problem::constructAlignmentMatrix(int *positionVector, int numRow, int l) const {
@@ -120,7 +121,7 @@ char **Problem::constructAlignmentMatrix(int *positionVector, int numRow, int l)
 }
 
 ConsensusString Problem::constructConsensusString(double **profileMatrix, int l) const {
-    std::string conSeq (l, '-');
+    std::string conSeq(l, '-');
 
     double maxTotal = 0;
     for (int i = 0; i < l; ++i) {
@@ -157,7 +158,7 @@ ConsensusString Problem::constructConsensusString(double **profileMatrix, int l)
     return ConsensusString(conSeq, sim);
 }
 
-double **Problem::constructProfileMatrix(char **alignmentMatrix, int numRow, int l) const{
+double **Problem::constructProfileMatrix(char **alignmentMatrix, int numRow, int l) const {
     double **profileMatrix = new double *[4]; //row order: A, T, G, C
     for (int k = 0; k < 4; ++k) {
         profileMatrix[k] = new double[l];

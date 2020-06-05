@@ -17,14 +17,15 @@ int main () {
     int *bestMotifIndexArray;
 
     GRASP grasp;
-    bestMotifIndexArray = grasp.GRASPMotifSearch(p, l, alpha, candidateRatio, generator, MAX_EVAL);
+    Solution solution = grasp.GRASPMotifSearch(p, l, alpha, candidateRatio, generator, MAX_EVAL);
+    bestMotifIndexArray = solution.startIndices;
 
     //Greedy greedy;
     //bestMotifIndexArray = greedy.GreedyMotifSearch(p, l);
 
     int numRow = p.getT();
 
-    std::cout << "Best motif index array:";
+    std::cout << std::endl << "Best motif index array:";
     for (int i = 0; i < p.getT(); ++i) {
         std::cout << bestMotifIndexArray[i] << ", ";
     }
@@ -61,8 +62,6 @@ int main () {
         delete[] pm[i];
     }
     delete[] pm;
-
-    delete[] bestMotifIndexArray;
 
     return 0;
 }
