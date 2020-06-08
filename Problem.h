@@ -31,7 +31,7 @@ public:
 
     std::string *getSequences() const;
 
-    void evaluateSolution(Solution &sol, int numRow, int l) const;
+    void evaluateSolution(Solution *sol, int numRow, int l) const;
 
     char **constructAlignmentMatrix(int *positionVector, int numRow, int l) const;
 

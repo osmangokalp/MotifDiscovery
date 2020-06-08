@@ -7,12 +7,12 @@
 #include <iostream>
 #include <vector>
 
-Solution
+Solution *
 GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateRatio,
                         std::default_random_engine generator, int MAX_EVAL) const {
     int n = problem.getN();
     int t = problem.getT();
-    Solution bestSolution(t); //best solution
+    Solution *bestSolution = nullptr; //best solution
 
     int numEval = 0;
 
@@ -32,8 +32,8 @@ GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateR
 
         //init solution
         int s0 = generator() % (n - l + 1); //random start index
-        Solution solution(t); //incumbent solution
-        solution.startIndices[0] = s0;
+        Solution *solution = new Solution(t); //incumbent solution
+        solution->startIndices[0] = s0;
 
         for (int rowIndex = 1; rowIndex < t; ++rowIndex) {
             //construct candidate list CL
@@ -52,12 +52,12 @@ GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateR
             double max = 0.0;
             double min = 1.0;
             for (int j = 0; j < candidateCount; ++j) {
-                solution.startIndices[rowIndex] = CL[j];
+                solution->startIndices[rowIndex] = CL[j];
 
                 problem.evaluateSolution(solution, rowIndex + 1, l);
                 numEval++;
 
-                scores[j] = solution.similarityScore;
+                scores[j] = solution->similarityScore;
                 if (scores[j] > max) {
                     max = scores[j];
                 }
@@ -78,44 +78,51 @@ GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateR
             //select random from RCL
             int selectedIndex = generator() % RCLSize;
             int selected = RCL[selectedIndex];
-            solution.startIndices[rowIndex] = selected;
+            solution->startIndices[rowIndex] = selected;
         }
 
         //final evaluation of the produced solution before local search
         problem.evaluateSolution(solution, t, l);
         numEval++;
 
-        std::cout << "Score: " << solution.similarityScore << std::endl;
+        std::cout << "Score: " << solution->similarityScore << std::endl;
 
         std::cout << "Solution index array:";
         for (int i = 0; i < t; ++i) {
-            std::cout << solution.startIndices[i] << ", ";
+            std::cout << solution->startIndices[i] << ", ";
         }
         std::cout << std::endl;
 
         bool imp;
         do {
             imp = false;
-            double before = solution.similarityScore;
+            double before = solution->similarityScore;
             ls.oneExchange(problem, l, firstImp, solution, numEval);
-            double after = solution.similarityScore;
+            double after = solution->similarityScore;
             if (after - before > 0) {
                 imp = true;
             }
         } while (imp);
 
-        std::cout << "Score after ls: " << solution.similarityScore << std::endl;
+        std::cout << "Score after ls: " << solution->similarityScore << std::endl;
         std::cout << "Solution index array:";
         for (int i = 0; i < t; ++i) {
-            std::cout << solution.startIndices[i] << ", ";
+            std::cout << solution->startIndices[i] << ", ";
         }
         std::cout << std::endl;
 
-        if (GRASPIter == 0) {
-            bestSolution = solution; //deep copy with copy constructor
+        if (bestSolution == nullptr) {
+            bestSolution = solution;
         } else {
-            if (solution.similarityScore > bestSolution.similarityScore) {
-                bestSolution = solution; //deep copy with copy constructor
+            if (solution->similarityScore > bestSolution->similarityScore) {
+                delete bestSolution;
+                bestSolution = solution;
+                std::cout << std::endl << "\tBEST SOLUTION assigned at iter :" << GRASPIter;
+                for (int i = 0; i < t; ++i) {
+                    std::cout << bestSolution->startIndices[i] << ", ";
+                }
+            } else {
+                delete solution;
             }
         }
     }
@@ -123,6 +130,11 @@ GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateR
     delete[] CL;
     delete[] RCL;
     delete[] scores;
+
+    std::cout << std::endl << "Best motif index array before return:";
+    for (int i = 0; i < t; ++i) {
+        std::cout << bestSolution->startIndices[i] << ", ";
+    }
 
     return bestSolution;
 }

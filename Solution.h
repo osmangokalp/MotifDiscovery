@@ -16,7 +16,6 @@ public:
     std::string consensusString;
 
     Solution(int len);
-    Solution(const Solution &obj); //copy constructor for deep copy
 
     virtual ~Solution();
 };

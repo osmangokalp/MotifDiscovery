@@ -7,24 +7,16 @@
 #include "Solution.h"
 
 Solution::Solution(int len) : len(len) {
+    //std::cout << "NORMAL CONSTRUCTOR RUN" << std::endl;
     startIndices = new int[len];
     for (int i = 0; i < len; ++i) {
         startIndices[i] = -1; //assign default value
     }
+    similarityScore = 0.0;
+    consensusString = "";
 }
 
 Solution::~Solution() {
+    //std::cout << "DESTRUCTOR RUN" << std::endl;
     delete[] startIndices;
-}
-
-Solution::Solution(const Solution &obj) {
-    std::cout << "COPY CONSTRUCTOR RAN";
-    len = obj.len;
-    similarityScore = obj.similarityScore;
-    consensusString = obj.consensusString;
-
-    startIndices = new int[len];
-    for (int i = 0; i < len; ++i) {
-        startIndices[i] = obj.startIndices[i];
-    }
 }

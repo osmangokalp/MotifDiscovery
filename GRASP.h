@@ -12,7 +12,7 @@
 
 class GRASP {
 public:
-    Solution
+    Solution *
     GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateRatio, std::default_random_engine generator,
                      int MAX_EVAL) const;
 };

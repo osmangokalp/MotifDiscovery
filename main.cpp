@@ -8,7 +8,7 @@
 
 int main () {
     Problem p("hm03r.fasta");
-    int l = 10;
+    int l = 1;
     double alpha = 1.0;
     double candidateRatio = 0.2;
     int SEED = 101;
@@ -16,12 +16,15 @@ int main () {
     int MAX_EVAL = p.getN() * (p.getN() - 1)  * 0.5 + (p.getT() - 2) * p.getN();
     int *bestMotifIndexArray;
 
-    GRASP grasp;
-    Solution solution = grasp.GRASPMotifSearch(p, l, alpha, candidateRatio, generator, MAX_EVAL);
-    bestMotifIndexArray = solution.startIndices;
+    Solution *solution = nullptr;
 
-    //Greedy greedy;
-    //bestMotifIndexArray = greedy.GreedyMotifSearch(p, l);
+    /*GRASP grasp;
+    solution = grasp.GRASPMotifSearch(p, l, alpha, candidateRatio, generator, MAX_EVAL);
+    bestMotifIndexArray = solution->startIndices;*/
+
+    Greedy greedy;
+    solution = greedy.GreedyMotifSearch(p, l);
+    bestMotifIndexArray = solution->startIndices;
 
     int numRow = p.getT();
 
@@ -52,7 +55,9 @@ int main () {
     std::cout << "Consensus string: " << cs.getSequence() << std::endl;
     std::cout << "Consensus similarity: " << cs.getSimilarity() << std::endl;
 
-    //free
+    //free memory
+    delete solution;
+
     for (int i = 0; i < numRow; ++i) {
         delete[] am[i];
     }

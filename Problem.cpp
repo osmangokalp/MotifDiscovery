@@ -60,10 +60,10 @@ Problem::Problem(const std::string &fileName) : fileName(fileName) {
     this->n = sequences[0].size();
 }
 
-void Problem::evaluateSolution(Solution &sol, int numRow, int l) const {
+void Problem::evaluateSolution(Solution *sol, int numRow, int l) const {
     double sim = -1;
 
-    char **alignmentMatrix = constructAlignmentMatrix(sol.startIndices, numRow, l);
+    char **alignmentMatrix = constructAlignmentMatrix(sol->startIndices, numRow, l);
     double **profileMatrix = constructProfileMatrix(alignmentMatrix, numRow, l);
     ConsensusString consensusString = constructConsensusString(profileMatrix, l);
 
@@ -78,8 +78,8 @@ void Problem::evaluateSolution(Solution &sol, int numRow, int l) const {
     }
     delete[] profileMatrix;
 
-    sol.consensusString = consensusString.getSequence();
-    sol.similarityScore = consensusString.getSimilarity();
+    sol->consensusString = consensusString.getSequence();
+    sol->similarityScore = consensusString.getSimilarity();
 }
 
 char **Problem::constructAlignmentMatrix(int *positionVector, int numRow, int l) const {

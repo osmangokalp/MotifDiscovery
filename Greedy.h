@@ -10,7 +10,7 @@
 
 class Greedy {
 public:
-    Solution GreedyMotifSearch(Problem &problem, int l) const;
+    Solution *GreedyMotifSearch(Problem &problem, int l) const;
 };
 
 
