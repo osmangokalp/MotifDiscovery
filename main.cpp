@@ -9,8 +9,8 @@
 int main () {
     Problem p("hm03r.fasta");
     int l = 10;
-    double alpha = 0.9; //1.0
-    double candidateRatio = 0.5; //0.2
+    double alpha = 0.5; //1.0
+    double candidateRatio = 1.0; //0.2
     int SEED = 101;
     std::default_random_engine generator(SEED);
     int MAX_EVAL = p.getN() * (p.getN() - 1)  * 0.5 + (p.getT() - 2) * p.getN();
