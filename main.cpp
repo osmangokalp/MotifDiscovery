@@ -8,9 +8,9 @@
 
 int main () {
     Problem p("hm03r.fasta");
-    int l = 1;
-    double alpha = 1.0;
-    double candidateRatio = 0.2;
+    int l = 10;
+    double alpha = 0.9; //1.0
+    double candidateRatio = 0.5; //0.2
     int SEED = 101;
     std::default_random_engine generator(SEED);
     int MAX_EVAL = p.getN() * (p.getN() - 1)  * 0.5 + (p.getT() - 2) * p.getN();
@@ -18,13 +18,13 @@ int main () {
 
     Solution *solution = nullptr;
 
-    /*GRASP grasp;
+    GRASP grasp;
     solution = grasp.GRASPMotifSearch(p, l, alpha, candidateRatio, generator, MAX_EVAL);
-    bestMotifIndexArray = solution->startIndices;*/
-
-    Greedy greedy;
-    solution = greedy.GreedyMotifSearch(p, l);
     bestMotifIndexArray = solution->startIndices;
+
+    /*Greedy greedy;
+    solution = greedy.GreedyMotifSearch(p, l);
+    bestMotifIndexArray = solution->startIndices;*/
 
     int numRow = p.getT();
 

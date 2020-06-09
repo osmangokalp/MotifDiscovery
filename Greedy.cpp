@@ -20,20 +20,7 @@ Solution *Greedy::GreedyMotifSearch(Problem &problem, int l) const {
     bestSolution->startIndices[0] = 0;
     bestSolution->startIndices[1] = 0;
 
-    std::cout << std::endl << "indices:" << std::endl;
-    for (int m = 0; m < 2; ++m) {
-        if (bestSolution->startIndices[m] == 0) {
-
-        }
-        std::cout << std::endl << bestSolution->startIndices[m];
-    }
-
     problem.evaluateSolution(bestSolution, 2, l);
-
-    std::cout << std::endl << "indices:" << std::endl;
-    for (int m = 0; m < 2; ++m) {
-        std::cout << std::endl << bestSolution->startIndices[m];
-    }
 
     //create and init incumbent solution
     Solution *solution = new Solution(t);
@@ -54,37 +41,23 @@ Solution *Greedy::GreedyMotifSearch(Problem &problem, int l) const {
     solution->startIndices[0] = bestSolution->startIndices[0];
     solution->startIndices[1] = bestSolution->startIndices[1];
 
-    std::cout << std::endl << "indices:" << std::endl;
-    for (int m = 0; m < 2; ++m) {
-        std::cout << std::endl << bestSolution->startIndices[m];
-    }
-
     for (int i = 2; i < t; ++i) {
         bestSolution->startIndices[i] = 0; //include index i into calculation (default value -1 that means sequence i will not be used)
         problem.evaluateSolution(bestSolution, i + 1, l);
 
-        std::cout << std::endl << "indices:" << std::endl;
-        for (int m = 0; m < i + 1; ++m) {
-            std::cout << std::endl << bestSolution->startIndices[m];
-        }
-
-        char **am = problem.constructAlignmentMatrix(bestSolution->startIndices, i + 1, l);
-        std::cout << std::endl << "Alignment matrix:" << std::endl;
-        for (int m = 0; m < i + 1; ++m) {
-            for (int j = 0; j < l; ++j) {
-                std::cout << am[i][j];
-            }
-            std::cout << std::endl;
-        }
-
-        std::cout << std::endl << "indices:" << std::endl;
-        for (int m = 0; m < i + 1; ++m) {
-            std::cout << std::endl << bestSolution->startIndices[m];
+        for (int j = 0; j < i + 1; ++j) { //copy first parts from the best solution
+            solution->startIndices[j] = bestSolution->startIndices[j];
         }
 
         for (int si = 0; si < n - l + 1; ++si) {
             solution->startIndices[i] = si;
             problem.evaluateSolution(solution, i + 1, l);
+
+            std::cout << std::endl << "sol:" << std::endl;
+            std::cout << "Sim: " << solution->similarityScore << std::endl;
+            for (int m = 0; m < i + 1; ++m) {
+                std::cout << solution->startIndices[m] << std::endl ;
+            }
 
             if (solution->similarityScore > bestSolution->similarityScore) {
                 delete bestSolution;
