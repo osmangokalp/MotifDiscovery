@@ -53,11 +53,11 @@ Solution *Greedy::GreedyMotifSearch(Problem &problem, int l) const {
             solution->startIndices[i] = si;
             problem.evaluateSolution(solution, i + 1, l);
 
-            std::cout << std::endl << "sol:" << std::endl;
+            /*std::cout << std::endl << "sol:" << std::endl;
             std::cout << "Sim: " << solution->similarityScore << std::endl;
             for (int m = 0; m < i + 1; ++m) {
                 std::cout << solution->startIndices[m] << std::endl ;
-            }
+            }*/
 
             if (solution->similarityScore > bestSolution->similarityScore) {
                 delete bestSolution;
