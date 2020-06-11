@@ -5,9 +5,22 @@
 #include "GRASP.h"
 #include "LocalSearch.h"
 #include "Perturbation.h"
+#include "Experiment.h"
 
 int main () {
-    Problem p("hm03r.fasta");
+
+    std::string instanceList[] = {"hm03r.fasta", "yst04r.fasta", "yst08r.fasta"};
+    int nArr[] = {1500, 1000, 1000};
+    int tArr[] = {10, 7, 11};
+
+    Experiment exp("../experiment");
+
+    for (int i = 0; i < 3; ++i) {
+        int maxEval = nArr[i] * (nArr[i] - 1)  * 0.5 + (tArr[i] - 2) * nArr[i];
+        exp.doGRASPExperiment(25, maxEval, 10, instanceList[i]);
+    }
+
+    /*Problem p("hm03r.fasta");
     int l = 10;
     double alpha = 0.5; //1.0
     double candidateRatio = 1.0; //0.2
@@ -19,12 +32,12 @@ int main () {
     Solution *solution = nullptr;
 
     GRASP grasp;
-    solution = grasp.GRASPMotifSearch(p, l, alpha, candidateRatio, generator, MAX_EVAL);
+    solution = grasp.GRASPMotifSearch(p, l, alpha, candidateRatio, true, generator, MAX_EVAL);
     bestMotifIndexArray = solution->startIndices;
 
-    /*Greedy greedy;
+    Greedy greedy;
     solution = greedy.GreedyMotifSearch(p, l);
-    bestMotifIndexArray = solution->startIndices;*/
+    bestMotifIndexArray = solution->startIndices;
 
     int numRow = p.getT();
 
@@ -66,7 +79,7 @@ int main () {
     for (int i = 0; i < 4; ++i) {
         delete[] pm[i];
     }
-    delete[] pm;
+    delete[] pm;*/
 
     return 0;
 }

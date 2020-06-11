@@ -8,7 +8,7 @@
 #include <vector>
 
 Solution *
-GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateRatio,
+GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateRatio, bool firstImp,
                         std::default_random_engine generator, int MAX_EVAL) const {
     int n = problem.getN();
     int t = problem.getT();
@@ -22,7 +22,6 @@ GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateR
     double *scores = new double[candidateCount];
 
     LocalSearch ls;
-    bool firstImp = true;
 
     int GRASPIter = -1;
     while (numEval < MAX_EVAL) {
@@ -94,7 +93,7 @@ GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateR
             }
         } while (imp);
 
-        std::cout << "GRASP iteration " << GRASPIter << ", Sol: " << solution->similarityScore << std::endl;
+        //std::cout << "GRASP iteration " << GRASPIter << ", Sol: " << solution->similarityScore << std::endl;
 
         if (bestSolution == nullptr) {
             bestSolution = solution;
@@ -102,7 +101,7 @@ GRASP::GRASPMotifSearch(Problem &problem, int l, double alpha, double candidateR
             if (solution->similarityScore > bestSolution->similarityScore) {
                 delete bestSolution;
                 bestSolution = solution;
-                std::cout << "\tNEW BEST" << std::endl;
+                //std::cout << "\tNEW BEST" << std::endl;
             } else {
                 delete solution;
             }
